@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1"> 
+		<title>Fall 2014 Dossier</title>
+		<meta name="description" content="Dossier of all DES351 (Design Perspectives) projects throughout the fall 2014 semester"/>
+		<meta name="keywords" content="tabs, inspiration, web design, css, modern, effects, svg"/>
+		<meta name="author" content="Sarah Micheletti"/>
+  		<script src="js/modernizr.custom.js"></script>
+  		<script src="js/2.modernizr.custom.js"></script>
+  		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,800,300' rel='stylesheet' type='text/css'>
+  		
+		<style>
+			.dialog,
+			.dialog__overlay {
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+			}
+			.dialog {
+				position: fixed;
+				display: -webkit-flex;
+				display: flex;
+				-webkit-justify-content: center;
+				pointer-events: none;
+				-webkit-align-items: flex-start;
+			}
+			.dialog__overlay {
+				position: absolute;
+				z-index: 1;
+				background: rgba(55, 58, 71, 0.9);
+				opacity: 0;
+				-webkit-transition: opacity 0.3s;
+				transition: opacity 0.3s;
+				-webkit-backface-visibility: hidden;
+			}
+			.dialog--open .dialog__overlay {
+				opacity: 1;
+				pointer-events: auto;
+			}
+			.dialog__content {
+				width: 50%;
+				max-width: 560px;
+				min-width: 290px;
+				background: #fff;
+				padding: 4em;
+				text-align: center;
+				position: relative;
+				z-index: 5;
+				opacity: 0;
+			}
+			.dialog--open .dialog__content {
+				pointer-events: auto;
+				opacity: 1;
+				-webkit-animation-duration: 0.3s;
+				animation-duration: 0.3s;
+				-webkit-animation-fill-mode: forwards;
+				animation-fill-mode: forwards;
+				-webkit-animation-name: anim-open;
+				animation-name: anim-open;
+			}
+			.dialog .dialog--close .dialog__content {
+				-webkit-animation-name: anim-close;
+				animation-name: anim-close;
+			}
+			.dialog .dialog--open .dialog__content,
+			.dialog .dialog--close .dialog__content {
+				opacity: 1;
+				-webkit-animation-duration: 0.3s;
+				animation-duration: 0.3s;
+				-webkit-animation-fill-mode: forwards;
+				animation-fill-mode: forwards;
+			}
+			.dialog .dialog--open h2,
+			.dialog .dialog--open button {
+				-webkit-animation: anim-elem 0.3s both;
+				animation: anim-elem 0.3s both;
+			}
+			.dialog .dialog--open h2 {
+				-webkit-animation-delay: 0.15s;
+				animation-delay: 0.15s;
+			}
+			.dialog .dialog--open button {
+				-webkit-animation-delay: 0.05s;
+				animation-delay: 0.05s;
+			}
+			.dialog--open {
+				z-index: 9000;
+			}
+			@-webkit-keyframes anim-open {
+				0% { -webkit-transform: translate3d(0, -100%, 0); }
+				100% { -webkit-transform: translate3d(0, 0, 0); }
+			}
+			@keyframes anim-open {
+				0% { -webkit-transform: translate3d(0, -100%, 0); transform: translate3d(0, -100%, 0); }
+				100% { -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0); }
+			}
+			@-webkit-keyframes anim-close {
+				0% { -webkit-transform: translate3d(0, 0, 0); }
+				100% { -webkit-transform: translate3d(0, -100%, 0); }
+			}
+			@keyframes anim-close {
+				0% { -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0); }
+				100% { -webkit-transform: translate3d(0, -100%, 0); transform: translate3d(0, -100%, 0); }
+			}
+		/*-----Inner elements animations-----*/
+			@-webkit-keyframes anim-elem {
+				0% { opacity: 0; -webkit-transform: translate3d(0, -100px, 0); }
+				100% { opacity: 1; -webkit-transform: translate3d(0, 0, 0); }
+			}
+			@keyframes anim-elem {
+				0% { opacity: 0; -webkit-transform: translate3d(0, -100px, 0); transform: translate3d(0, -100px, 0); }
+				100% { opacity: 1; -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0); }
+			}
+		/*-----Dialog Content-----*/
+			.dialog h2 {
+				margin: 0;
+				font-weight: 400;
+				font-size: 2em;
+				padding: 0 0 2em;
+				margin: 0;
+			}
+			body {
+				background: #fbfbfb;
+				color: #65696d;
+				font-weight: 400;
+				font-family: Open Sans, Arial, sans-serif;
+				margin: 0;
+			}
+			a {
+				color: #2CC185;
+				text-decoration: none;
+				outline: none;
+			}
+			a:hover, a:focus {
+				color: #74777b;
+			}
+			.hidden {
+				position: absolute;
+				width: 0;
+				height: 0;
+				overflow: hidden;
+				opacity: 0;
+			}
+			.container > section {
+				padding: 5em 0;
+				font-size: 1.25em;
+				min-height: 100%;
+			}
+			.tabs {
+				position: relative;
+				overflow: hidden;
+				margin: 0 auto;
+				width: 100%;
+				font-weight: 300;
+				font-size: 1.25em;
+			}
+		/*-----Nav-----*/
+			.tabs nav {
+				text-align: center;
+			}
+			.tabs nav ul {
+				position: relative;
+				display: -ms-flexbox;
+				display: -webkit-flex;
+				display: -moz-flex;
+				display: -ms-flex;
+				display: flex;
+				margin: 0 auto;
+				padding: 0;
+				max-width: 1200px;
+				list-style: none;
+				-ms-box-orient: horizontal;
+				-ms-box-pack: center;
+				-webkit-flex-flow: row wrap;
+				-moz-flex-flow: row wrap;
+				-ms-flex-flow: row wrap;
+				flex-flow: row wrap;
+				-webkit-justify-content: center;
+				-moz-justify-content: center;
+				-ms-justify-content: center;
+				justify-content: center;
+			}
+			.tabs nav ul li {
+				position: relative;
+				z-index: 1;
+				display: block;
+				margin: 0;
+				text-align: center;
+				-webkit-flex: 1;
+				-moz-flex: 1;
+				-ms-flex: 1;
+				flex: 1;
+			}
+			.tabs nav a {
+				position: relative;
+				display: block;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				line-height: 2.5;
+			}
+			.tabs nav a span {
+				vertical-align: middle;
+				font-size: 0.75em;
+			}
+			.tabs nav li.tab-current a {
+				color: #74777b;
+			}
+			.tabs nav a:focus {
+				outline: none;
+			}
+		/*-----Content of each section-----*/
+			.content-wrap {
+				position: relative;
+			}
+			.content-wrap section {
+				display: none;
+				margin: 0 auto;
+				max-width: 1200px;
+			}
+			.content-wrap section h1 {
+				text-align: left;
+				font-size: 2.4em;
+			}
+			.content-wrap section h2 {
+				text-align: left;
+			}
+			.content-wrap section.content-current {
+				display: block;
+			}
+			.content-wrap section p {
+				margin: 0;
+				padding-left: 20px;
+				padding-right: 20px;
+				color: rgba(40,44,42,0.5);
+				font-size: 1em;
+				line-height: 1;
+			}
+		/*-----Fallback-----*/
+			.no-js .content-wrap section {
+				display: block;
+				padding-bottom: 2em;
+				border-bottom: 1px solid rgba(255,255,255,0.6);
+			}
+			.no-flexbox nav ul {
+				display: block;
+			}
+			.no-flexbox nav ul li {
+				min-width: 15%;
+				display: inline-block;
+			}
+			@media screen and (max-width: 58em) {
+				.tabs nav a.icon span {
+					display: none;
+				}
+				.tabs nav a:before {
+					margin-right: 0;
+				}
+			}
+		/*-----Line-----*/
+			.tabs-style-line nav ul {
+				max-width: none;
+				box-shadow: inset 0 -2px #d1d3d2;
+			}
+			.tabs-style-line nav ul li {
+				width: 46%;
+				float: left;
+				margin-right: 10px;
+			}
+			.tabs-style-line nav ul:after {
+				content: '';
+				width: 100%;
+				display: block;
+				clear: both;
+			}
+			.tabs-style-line nav a {
+				padding: 0.7em 0.4em;
+				box-shadow: inset 0 -2px #d4d3d2;
+				color: #73767a;
+				text-align: left;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+				font-weight: 700;
+				font-size: .8em;
+				line-height: 1;
+				-webkit-transition: color 0.3s, box-shadow 0.3s;
+				transition: color 0.3s, box-shadow 0.3s;
+				padding-left: 10px;
+				font-weight: 400;
+			}
+			.tabs-style-line nav a:hover,
+			.tabs-style-line nav a:focus {
+				box-shadow: inset 0 -2px #74777b;
+			}
+			.tabs-style-line nav li.tab-current a {
+				box-shadow: inset 0 -2px #c94e50;
+				color: #343434;
+				font-weight: 800;
+			}
+			@media screen and (max-width: 58em) {
+				.tabs-style-line nav ul {
+					display: block;
+					box-shadow: none;
+				}
+				.tabs-style-line nav ul li {
+					display: block;
+					-webkit-flex: none;
+					flex: none;
+				}
+			}
+			@media screen and (min-width: 768px) {
+				.tabs-style-line nav a {
+					font-size: 1em;
+				}
+			}
+		/*-----Images-----*/
+			.tabs .content-wrap .main {
+				width: 100%;
+				height: 150px;
+				background-position: center;
+				background-size: cover;
+				margin-top: 40px;
+			}
+			@media screen and (min-width: 640px) {
+				.tabs .content-wrap .main {
+					height: 350px;
+				}
+			}
+			@media screen and (min-width: 768px) {
+				.tabs .content-wrap .main {
+					height: 450px;
+				}
+			}
+			.tabs .content-wrap .ibm-section .main {
+				background-image: url('file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/2ws1.png');
+				background-position: center right;
+			}
+			.tabs .content-wrap .sol-section .main {
+				background-image: url('file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/11ws2.png');
+			}
+			.tabs .content-wrap .gsdm-section .main {
+				background-image: url('file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/1ws3.png');
+				background-position: top center;
+			}
+			.tabs .content-wrap .critical-section .main {
+				background-image: url('file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/4ws4.png');
+			}
+			.tabs .content-wrap .industry-section .main {
+				background-image: url('file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/8ws5.png');
+			}
+			.tabs .content-wrap .helene-section .main {
+				background-image: url('file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/1ws6.png');
+			}
+		/*-----Header-----*/
+			.tabs .content-wrap h1 {
+				margin: 0;
+				padding-left: 20px;
+				padding-right: 10px;
+				padding-top: 30px;
+				font-size: 1.8em;
+				color: #343434;
+			}
+			.tabs .content-wrap hr {
+				margin-top: 5px;
+				margin-left: 20px;
+				margin-bottom: 15px;
+				margin-right: 20px;
+				border: 1px solid #838383;
+			}
+			.tabs .content-wrap h2 {
+				margin: 0;
+				padding-left: 20px;
+				padding-right: 10px;
+				font-size: .8em;
+				color: #616161;
+			}
+			.tabs .content-wrap .info {
+				font-size: .8em;
+				padding-top: 20px;
+				padding-bottom: 50px;
+				color: #7d7d7d;
+				line-height: 1.3em;
+			}
+			@media screen and (min-width: 640px) {
+				.tabs .content-wrap h1 {
+					font-size: 2em;
+					margin-top: 25px;
+				}
+				.tabs .content-wrap h2 {
+					font-size: 1em;
+				}
+				.tabs .content-wrap .info {
+					width: 75%;
+				}
+			}
+			@media screen and (min-width: 768px) {
+				.tabs .content-wrap h1,
+				.tabs .content-wrap hr,
+				.tabs .content-wrap h2,
+				.tabs .content-wrap .info {
+					padding-left: 50px;
+				}
+				.tabs .content-wrap h1 {
+					font-size: 2.2em;
+				}
+				.tabs .content-wrap h2 {
+					font-size: 1.2em;
+				}
+			}
+		/*-----Process-----*/
+			.process {
+				padding-right: 20px;
+				padding-left: 20px;
+				margin-top: 25px;
+			}
+			.content-wrap .process p {
+				padding-top: 5px;
+				padding-bottom: 15px;
+				padding-left: 0;
+			}
+			.process .half {
+				width: 47%;
+				padding: 5px;
+				padding-left: 0;
+				float: left;
+				font-size: .7em;
+			}
+			.process .half img,
+			.process .full img {
+				width: 100%;
+			}
+			.process .full {
+				width: 96%;
+				padding-top: 5px;
+				font-size: .7em;
+				padding-left: 0;
+			}
+			@media screen and (min-width: 640px) {
+				.process .half,
+				.process .full {
+					font-size: .8em;
+				}
+			}
+			@media screen and (min-width: 768px) {
+				.process {
+					margin-right: 20%;
+					margin-left: 25px;
+				}
+			}
+		/*-----About Button-----*/
+			.container .content .button-wrap button {
+				border: none;
+				padding: 10px;
+				width: 100%;
+				text-align: center;
+				margin: 10px;
+				margin-left: 0;
+				margin-top: 0;
+				display: block;
+				background-color: #c94e50;
+				font-size: .8em;
+				color: white;
+				font-weight: 800;
+				cursor: pointer;
+			}
+			.container .content .dialog .dialog__content button {
+				border: none;
+				padding: 10px;
+				width: 50%;
+				text-align: center;
+				margin: 10px;
+				margin-left: auto;
+				margin-right: auto;
+				margin-top: 50px;
+				display: block;
+				background-color: #c94e50;
+				font-size: .8em;
+				color: white;
+				font-weight: 800;
+				cursor: pointer;
+			}
+			.container .content .dialog .dialog__content h2 {
+				padding-bottom: 20px;
+			}
+			.container .content .dialog .dialog__content p {
+				text-align: left;
+			}
+			@media screen and (min-width: 768px) {
+				.container .content .button-wrap button {
+					width: 30%;
+					float: right;
+					margin-right: 50px;	
+					margin-bottom: 30px;
+				}
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div class="container">
+			<div class="content">
+				<header>
+					<div class="button-wrap"><button data-dialog="somedialog" class="trigger">Sarah Micheletti - About DES 350</button></div>
+				</header>
+				<div id="somedialog" class="dialog">
+					<div class="dialog__overlay"></div>
+					<div class="dialog__content">
+						<h2>DES 350 Fall 2014 Final Dossier</h2>
+						<p>This site serves as a compilation of the work done during the Fall 2014 semester at The University of Texas at Austin's class DES 350. The process as well as final product of each 6 workshops are shown. When done with other students as a group project, credit is given in the description.</p>
+						<p>Sarah Micheletti<br>The University of Texas at Austin<br>School of Fine Arts<br>August-December 2014</p>
+						<button class="action" data-dialog-close>Close</button></div>
+					</div>
+				</div>
+			</div><!-- /content -->
+		</div><!-- /container -->
+		<section>
+			<div class="tabs tabs-style-line">
+				<nav>
+					<ul>
+						<li><a href="#section-line-1"><span>IBM</span></a></li>
+						<li><a href="#section-line-2"><span>Sol Design</span></a></li>
+						<li><a href="#section-line-3"><span>GSD&M</span></a></li>
+						<li><a href="#section-line-4"><span>Critical Design</span></a></li>
+						<li><a href="#section-line-5"><span>Industry</span></a></li>
+						<li><a href="#section-line-5"><span>Wearable Tech</span></a></li>
+					</ul>
+				</nav>
+				<div class="content-wrap">
+					<section id="section-line-1">
+						<div class="ibm-section">
+							<div class="main">
+							</div>
+							<h1>Workshop 1: IBM</h1>
+							<hr>
+							<h2>Designers: Claire Kohler & Erin Heuber</h2>
+							<h2>September 10th, 2014</h2>
+							<p class="info">With Rio Sauer, Daniel Shipley, Cody Alder, Briana Zimbleman, and Edward Rendon<br><br>Our workshop with IBM focused primarily on design research processes along with some rapid prototyping. In class we began by identifying a problem and creating a stakeholders map. From there, we explored "Needs a way to _____ so that _____" statements as well as a "Says, Thinks, Does, Feels" map in order to better identify the needs of our persona. This was followed by various forms of observational research. Edward and I participated in fly-on-the-wall research in the evening watching runners while others in our group performed interviews and other observational research methods. We then rearranged our post-it maps due to new information while considering ways we could better execute research in the future. Our end product, "North Star," focuses on the specific needs runners experience when out at night or the early morning. The neon bands help ensure visibility to make the user feel safer while also incorporating in moisture wicking & cooling technology in the fabric.</p>
+							<div class="process">
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/1ws1.png">
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/2ws1.png">
+									<p>North Star advertisements</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/6ws1.png">
+									<p>Stakeholders map</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/5ws1.png">
+									<p>"Sandy needs a way to _____ so that _____" map</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/3ws1.png">
+									<p>"Sandy: Says, Thinks, Does, Feels" map</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/4ws1.png">
+									<p>Timeline looking at stages and "Doing, Thinking, Feeling"</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/7ws1.png">
+									<p>Views of post-it mapping</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/8ws1.png">
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/15ws1.png">
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/16ws1.png">
+									<p>Fly-on-the-wall observations</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/11ws1.png">
+									<p>Interview questions and answers</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/9ws1.png">
+									<p>T-shirt and dog collar rapid prototypes</p>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section id="section-line-2">
+						<div class="sol-section">
+							<div class="main">
+							</div>
+							<h1>Workshop 2: Sol Design</h1>
+							<hr>
+							<h2>Designer: Beth Ferguson</h2>
+							<h2>October 1st, 2014</h2>
+							<p class="info">With Savannah Hicks and Rio Sauer<br><br>For this workshop my teammates and I decided to focus on the re-design of the two current solar charging stations on campus. We focused on issues that the current solar stations struggle with such as: confusion with UFCU due to coloring, no apparent signage, temporary information in the form of magnets, and not enough information. Along with alterations for aesthetic appeal, we proposed to implement features to the station such as touch-charging power as well as informational kiosks at the center of the station. The branding and style reflects that of a Jetsons-era and harkens back to imaginative sci-fi where even personal jetpacks are possible. An app will accompany the station to give students information while also gaining data on their usage of the station. With future technology, stickers would allow users to wirelessly charge devices since we found many students don't bring phone chargers to campus on a daily basis. The station would be placed at another prime location on campus right outside the Union. This area gets a good deal of traffic as well as ample sunlight throughout the day.</p>
+							<div class="process">
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/6ws2.png">
+									<p>Current Station</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/7ws2.png">
+									<p>Proposed Design</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/8ws2.png">						
+									<p>Early Prototype Cutouts</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/9ws2.png">						
+									<p>Laser Cut Model Pieces</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/10ws2.png">
+									<p>Side View of Top with Neon Sign</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/17ws2.png">
+									<p>Final paper model</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/5ws2.png">						
+									<p>Alternate Color Palette</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/4ws2.png">						
+									<p>Example screens of central interactive console</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/14ws2.png">						
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/2ws2.png">						
+									<p>Vinyl stickers to placed around campus on walkways</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/3ws2.png">						
+									<p>Examples of charging stickers for phones & laptops</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/15ws2.png">						
+									<p>Low-fidelity mockups of phone app</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/16ws2.png">
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/13ws2.png">						
+									<p>App and station</p>	
+								</div>
+							</div>
+						</div>
+					</section>
+					<section id="section-line-3">
+						<div class="gsdm-section">
+							<div class="main">
+							</div>
+							<h1>Workshop 3: GSD&M</h1>
+							<h2>Designer: Will Chau</h2>
+							<h2>November 5th, 2014</h2>
+							<p class="info">Charged with using the "1+1=3" method to create something more than merely an advertisement for a Ford-F150, my final proposal includes a special edition Parks & Rec truck. Based on an early idea of Ford "carrying the world," I worked to find a way to encourage Ford to in some way be more eco-friendly. While a re-design of the truck's mechanics was out of the question, the company can still help the environment through this special edition truck. The added on cost would go toward implementing the special truck-bed features as well as a portion being donated to the buyer's local Parks & Rec department. The truck-bed would have rearrangeable compartment walls as well as a chest containing camping and survival essentials. Along with this special edition truck, Ford would release a series of advertisements owning up to producing gas-guzzler trucks while also emphasizing that they realize this and wish to help out the environment in other ways. The Parks & Rec edition would serve its goal of being a tough, strong truck while also contributing in some other way to the preservation of our planet.</p>
+							<div class="process">
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/2ws3.png">						
+									<p>Advertisement mockup done after final crit</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/1ws3.png">
+									<p>Final Proposal Poster</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/3ws3.png">
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/4ws3.png">
+									<p>Iterations of proposal pitch</p>						
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/6ws3.png">
+									<p>Original quick sketch of possible proposal</p>						
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/5ws3.png">
+									<p>Early iteration of advertisement idea</p>						
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/7ws3.png">
+									<p>Pin-up of sketches focused on combining words derived from "Ford + Tough"</p>						
+								</div>
+							</div>
+						</div>
+					</section>
+					<section id="section-line-4">
+						<div class="critical-section">
+							<div class="main">
+							</div>
+							<h1>Workshop 4: Critical Design</h1>
+							<h2>Designer: Becky Nasadowski</h2>
+							<h2>October 29th, 2014</h2>
+							<p class="info">With Savannah Hicks & Rio Sauer<br><br>Critical design can take many forms and methods of communication; however, Savannah, Rio, and I decided early on that we wished to explore critical design through satire. "Bad Block" helps deflect any racism, sexism, prejudice, or bullying through literally blocking words or sights by a blindfold and headset while the cheek-turner encourages the user to be a better person by accepting what is physically done to them by turning the other cheek. What should be obvious to the viewer (or user) is that this simple, universal solution to a huge societal problem is utterly ineffective. As designers, we must hone in on specific ways to solve problems, even if that means the end result may not be perfect for every person. Through its ridiculous proposal, Bad Block serves to provoke thought in the viewer of the large issues as well as current proposed solutions that often miss the mark.</p>
+							<div class="process">
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/1ws4.png">						
+									<p>Final poster</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/6ws4.png">
+									<p>Monkey mascots</p>
+								</div>
+								
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/3ws4.png">						
+									<p>Sketches of items</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/2ws4.png">						
+									<p>Early stage mockup of advertisement</p>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section id="section-line-5">
+						<div class="industry-section">
+							<div class="main">
+							</div>
+							<h1>Workshop 5: Industry</h1>
+							<h2>Designers: Bobby Dixon, Bart Kibbe, Brian Maclaskey</h2>
+							<h2>November 19th, 2014</h2>
+							<p class="info">With Caroline Wallace, Meredith Gunn, and Savannah Hicks<br><br>Posed with the phrase "Watch your step" we decided to raise students' situational awareness on campus through a holiday-themed campaign. "Be Present" consisted of a vinyl "watch your step" adhered to a stair step going to the art building covered by wrapping paper with "be present" screen printed on it wrapped up nicely in golden ribbon. Our hope was that as students walked on the wrapping paper, unaware of their surroundings due to their phone or other stimuli, and ultimately tear it up to reveal the "watch your step." While not everyone seemed to notice it as they walked over, surprisingly many people skipped over the step and were more aware than we expected.</p>
+							<div class="process">
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/5ws5.png">						
+									<p>Final form</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/2ws5.png">						
+									<p>Sketch of potential print for wrapping paper</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/3ws5.png">
+									<p>Word placement sketches</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/14ws5.png">						
+									<p>Sketch of alternate wrapping paper print</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/1ws5.png">						
+									<p>Sketch of plan</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/12ws5.png">						
+									<p>"WATCH YOUR STEP" for vinyl cutter</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/13ws5.png">						
+									<p>"be present" for vinyl cutter</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/10ws5.png">
+									<p>Preparing vinyl</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/15ws5.png">
+									<p>Screen printing on wrapping paper</p>						
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/4ws5.png">						
+									<p>Implementation</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/9ws5.png">						
+									<p>Vinyl adhered to step before wrapping</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/7ws5.png">						
+									<p>Step in use</p>
+								</div>
+								<div class="half">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/6ws5.png">
+									<p>Clean up</p>
+								</div>
+							</div>
+						</div>
+					</section>
+					<section id="section-line-6">
+						<div class="helene-section">
+							<div class="main">
+							</div>
+							<h1>Workshop 6: Wearable Tech</h1>
+							<h2>Designer: Helene Day Fraser</h2>
+							<h2>December 3rd, 2014</h2>
+							<p class="info">With Savannah Hicks & Rio Sauer<br><br>Starting off with a pair of embroidered jeans from Goodwill, we created a narrative of a middle-aged white woman named Mary Jo-Jo interested in gardening. After our narrative we were encouraged to ideate on ways in which we could use fashion as a narrative and conversation starter. One of the ideas we iterated on at Helene's request was "centipede pants." These pants contain multiple legs and encourage users to work together in order to move as a way to bond and become closer. However, we changed course and instead focused on The Tracksuit which integrated technology and clothing together.</p>
+							<div class="process">
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/2ws6.png">						
+									<p>Storyline created based on our Goodwill jeans</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/6ws6.png">						
+									<p>Modeling of pants in character [model: Rio Sauer]</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/3ws6.png">
+									<p>Rapid prototyping & testing of "Centipede Pants" idea</p>
+								</div>
+								<div class="full">
+									<img src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/images/4ws6.png">						
+									<p>Final proposed idea: "Tracksuit"</p>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div><!-- /content -->
+			</div><!-- /tabs -->
+		</section>
+
+		<script src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/js/classie.js"></script>
+		<script src="file:///Volumes/Macintosh%20HD/Users/sarahmicheletti/Desktop/Dossier/js/dialogFx.js"></script>
+		<script src="js/cbpFWTabs.js"></script>
+		<script>
+			(function() {
+
+				[].slice.call( document.querySelectorAll( '.tabs' ) ).forEach( function( el ) {
+					new CBPFWTabs( el );
+				});
+
+			})();
+		</script>
+		<script>
+			(function() {
+
+				var dlgtrigger = document.querySelector( '[data-dialog]' ),
+					somedialog = document.getElementById( dlgtrigger.getAttribute( 'data-dialog' ) ),
+					dlg = new DialogFx( somedialog );
+
+				dlgtrigger.addEventListener( 'click', dlg.toggle.bind(dlg) );
+
+			})();
+		</script>
+	</body>
+</html>
